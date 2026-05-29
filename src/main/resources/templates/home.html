@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario - Arte27</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --card-bg: rgba(22, 24, 33, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-accent: #e5c158; /* Warm Gold */
+            --primary-accent-rgb: 229, 193, 88;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success-color: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --danger-color: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.15);
+            --font-display: 'Outfit', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(var(--primary-accent-rgb), 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(var(--primary-accent-rgb), 0.03) 0%, transparent 40%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(var(--primary-accent-rgb), 0.3);
+        }
+
+        .banner-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .banner-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+            transition: transform 0.8s ease;
+        }
+
+        .card:hover .banner-image {
+            transform: scale(1.05);
+        }
+
+        .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(13, 14, 18, 0.95), transparent);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .brand {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--primary-accent);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .title {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 0%, #e5e7eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .content {
+            padding: 2rem 1.5rem;
+        }
+
+        .section-header {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: var(--font-display);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .footer a {
+            color: var(--primary-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container" id="main-container">
+        <div class="card" id="shirt-inventory-card">
+            <!-- Header banner with image served from static folder -->
+            <div class="banner-container">
+                <img th:src="@{/images/arte27_banner.png}" alt="Arte27 Camisas" class="banner-image" id="banner-img">
+                <div class="banner-overlay">
+                    <span class="brand">Arte27</span>
+                    <h1 class="title">Inventario de Camisas</h1>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="section-header">
+                    <span>Detalle de Prenda</span>
+                    <span class="brand" style="font-size: 0.7rem; margin: 0;">ID: #0027</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Modelo / Camisa</span>
+                    <span class="detail-value" th:text="${camisa}" id="val-camisa">Camisa Ejemplo</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Fecha de Registro</span>
+                    <span class="detail-value" th:text="${#dates.format(fechaRegistro, 'dd/MM/yyyy HH:mm')}" id="val-fecha">29/05/2026</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Precio Unitario</span>
+                    <span class="detail-value" style="color: var(--primary-accent);" th:text="'$' + ${#numbers.formatDecimal(precio, 1, 2)}" id="val-precio">$0.00</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Estado de Stock</span>
+                    <span id="val-disponible">
+                        <span th:if="${disponible}" class="badge badge-success">En Stock</span>
+                        <span th:unless="${disponible}" class="badge badge-danger">Agotado</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2026 <span style="color: var(--primary-accent); font-weight: 600;">Arte27</span>. Todos los derechos reservados.</p>
+        </footer>
+    </main>
+
+</body>
+</html>
