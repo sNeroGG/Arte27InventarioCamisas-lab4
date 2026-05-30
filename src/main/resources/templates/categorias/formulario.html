@@ -174,8 +174,9 @@
     <!-- Top Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
         <div class="container">
-            <a class="navbar-brand brand-font" href="/" id="nav-brand-new-cat">
-                <i class="bi bi-gem me-2 text-primary" style="color: var(--primary-accent) !important;"></i>ARTE<span>27</span>
+            <a class="navbar-brand brand-font d-flex align-items-center" href="/" id="nav-brand-new-cat">
+                <img th:src="@{/images/Arte272026.png}" alt="Arte27 Logo" class="me-2" style="height: 38px; max-width: 160px; object-fit: contain; display: none;" onload="this.style.display='inline'; document.getElementById('brand-text-fallback-new-cat').style.display='none';">
+                <span id="brand-text-fallback-new-cat"><i class="bi bi-gem me-2 text-primary" style="color: var(--primary-accent) !important;"></i>ARTE<span>27</span></span>
             </a>
             <div class="d-flex align-items-center ms-auto">
                 <a href="/categorias" class="btn btn-outline-purple btn-sm d-flex align-items-center px-3 py-2" id="btn-back-cat-nav">
