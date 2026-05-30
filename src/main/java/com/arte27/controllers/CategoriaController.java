@@ -23,7 +23,7 @@ public class CategoriaController {
 
     @GetMapping
     public String listarCategorias(Model model) {
-        List<Categoria> listado = categoriaService.listarCategorias();
+        List<Categoria> listado = categoriaService.buscarTodo();
         model.addAttribute("categorias", listado);
         return "categorias/lista";
     }
@@ -37,7 +37,7 @@ public class CategoriaController {
 
     @GetMapping("/editar/{id}")
     public String editarCategoriaForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
-        Categoria categoria = categoriaService.buscarCategoria(id);
+        Categoria categoria = categoriaService.buscarPorId(id);
         if (categoria == null) {
             redirectAttributes.addFlashAttribute("errorMsg", "La categoría específica no existe.");
             return "redirect:/categorias";
@@ -58,20 +58,20 @@ public class CategoriaController {
             return redirectTarget;
         }
         
-        categoriaService.guardarCategoria(categoria);
+        categoriaService.guardar(categoria);
         redirectAttributes.addFlashAttribute("successMsg", "¡Categoría '" + categoria.getNombre() + "' guardada correctamente!");
         return "redirect:/categorias";
     }
 
     @GetMapping("/eliminar/{id}")
     public String eliminarCategoria(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        Categoria categoria = categoriaService.buscarCategoria(id);
+        Categoria categoria = categoriaService.buscarPorId(id);
         if (categoria == null) {
             redirectAttributes.addFlashAttribute("errorMsg", "La categoría que intenta eliminar no existe.");
             return "redirect:/categorias";
         }
         
-        categoriaService.eliminarCategoria(id);
+        categoriaService.eliminar(id);
         redirectAttributes.addFlashAttribute("successMsg", "¡Categoría '" + categoria.getNombre() + "' eliminada correctamente!");
         return "redirect:/categorias";
     }

@@ -1,5 +1,6 @@
 package com.arte27.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,12 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.web.multipart.MultipartFile;
 import com.arte27.models.Camisa;
 import com.arte27.services.CamisaService;
 import com.arte27.services.CategoriaService;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -28,15 +27,14 @@ public class HomeController {
     @Autowired
     private CategoriaService categoriaService;
 
-    
     @GetMapping("/")
     public String index(
             @RequestParam(name = "buscar", required = false) String buscar,
             @RequestParam(name = "color", required = false) String color,
             Model model) {
         
-        List<Camisa> camisas = camisaService.buscarCamisas(buscar, color);
-        List<String> colores = camisaService.colores();
+        List<Camisa> camisas = camisaService.buscarPorFiltros(buscar, color);
+        List<String> colores = camisaService.obtenerColores();
         
         model.addAttribute("camisas", camisas);
         model.addAttribute("colores", colores);
@@ -49,19 +47,18 @@ public class HomeController {
     @GetMapping("/camisas/nueva")
     public String crearCamisaForm(Model model) {
         Camisa camisa = new Camisa();
-        // Set defaults
         camisa.setStock(10);
         camisa.setColor("Blanco");
         camisa.setTalla("M");
         
-        List<String> listColores = new ArrayList<>(camisaService.colores().stream()
+        List<String> listColores = new ArrayList<>(camisaService.obtenerColores().stream()
                 .filter(c -> !c.equalsIgnoreCase("Todos"))
                 .collect(Collectors.toList()));
         
         model.addAttribute("camisa", camisa);
         model.addAttribute("colores", listColores);
         model.addAttribute("tallas", List.of("S", "M", "L", "XL"));
-        model.addAttribute("categorias", categoriaService.listarCategorias().stream()
+        model.addAttribute("categorias", categoriaService.buscarTodo().stream()
                 .filter(com.arte27.models.Categoria::isActivo)
                 .collect(Collectors.toList()));
         
@@ -70,13 +67,13 @@ public class HomeController {
 
     @GetMapping("/camisas/editar/{id}")
     public String editarCamisaForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
-        Camisa camisa = camisaService.buscarCamisa(id);
+        Camisa camisa = camisaService.buscarPorId(id);
         if (camisa == null) {
             redirectAttributes.addFlashAttribute("errorMsg", "La camisa especificada no existe.");
             return "redirect:/";
         }
         
-        List<String> listColores = new ArrayList<>(camisaService.colores().stream()
+        List<String> listColores = new ArrayList<>(camisaService.obtenerColores().stream()
                 .filter(c -> !c.equalsIgnoreCase("Todos"))
                 .collect(Collectors.toList()));
         
@@ -90,7 +87,7 @@ public class HomeController {
         model.addAttribute("camisa", camisa);
         model.addAttribute("colores", listColores);
         model.addAttribute("tallas", List.of("S", "M", "L", "XL"));
-        model.addAttribute("categorias", categoriaService.listarCategorias().stream()
+        model.addAttribute("categorias", categoriaService.buscarTodo().stream()
                 .filter(com.arte27.models.Categoria::isActivo)
                 .collect(Collectors.toList()));
         
@@ -150,20 +147,20 @@ public class HomeController {
             }
         }
         
-        camisaService.guardarCamisa(camisa);
+        camisaService.guardar(camisa);
         redirectAttributes.addFlashAttribute("successMsg", "¡Camisa '" + camisa.getNombre() + "' guardada correctamente!");
         return "redirect:/";
     }
 
     @GetMapping("/camisas/eliminar/{id}")
     public String eliminarCamisa(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        Camisa camisa = camisaService.buscarCamisa(id);
+        Camisa camisa = camisaService.buscarPorId(id);
         if (camisa == null) {
             redirectAttributes.addFlashAttribute("errorMsg", "La camisa que intenta eliminar no existe.");
             return "redirect:/";
         }
         
-        camisaService.eliminarCamisa(id);
+        camisaService.eliminar(id);
         redirectAttributes.addFlashAttribute("successMsg", "¡Camisa '" + camisa.getNombre() + "' eliminada correctamente!");
         return "redirect:/";
     }

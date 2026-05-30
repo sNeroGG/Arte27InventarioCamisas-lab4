@@ -1,8 +1,20 @@
 package com.arte27.models;
 
 import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import org.springframework.format.annotation.DateTimeFormat;
 
+@Entity
+@Table(name = "camisas")
 public class Camisa {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
     private Double precio;
@@ -10,7 +22,11 @@ public class Camisa {
     private String talla; // e.g. "S", "M", "L", "XL"
     private Integer stock;
     private Boolean disponible;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.S")
     private Date fechaRegistro;
+
     private String imagenUrl;
     private String categoria;
 
@@ -118,6 +134,7 @@ public class Camisa {
         if (color == null) return "#6b7280"; // fallback grey
         switch (color.toLowerCase().trim()) {
             case "blanco":
+            case "crema":
                 return "#ffffff";
             case "azul":
                 return "#3b82f6";
@@ -128,6 +145,7 @@ public class Camisa {
             case "rojo":
                 return "#ef4444";
             case "amarillo":
+            case "amarillo2":
                 return "#eab308";
             case "naranja":
                 return "#f97316";
